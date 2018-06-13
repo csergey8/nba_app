@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import NewsSlider from '../widgets/NewsSlider/NewsSlider';
 import NewsList from '../widgets/NewsList/NewsList';
+import VideosList from '../widgets/VideosList/VideosList';
 
 class Home extends Component {
   render() {
@@ -19,7 +20,15 @@ class Home extends Component {
         loadmode={true}
         start={3}
         amount={3} />
+        <VideosList
+        type="card"
+        title={true}
+        loadmore={true}
+        start={0}
+        amount={3}
+        />
       </div>
+        
     )
   }
 }
