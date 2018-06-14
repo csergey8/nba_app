@@ -2,7 +2,6 @@ import React from 'react'
 import style from '../Articles.css';
 
 const TeamInfo = (props) => {
-  console.log(props);
   const renderStats = () => {
     if(props.team.stats) {
       return (
