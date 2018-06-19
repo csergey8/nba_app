@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { Link } from 'react-router-dom';
-import { URL } from '../../../config';
 import Button from '../../widgets/Button/Button';
 import CardInfo from '../../widgets/CardInfo/CardInfo';
+
+import { firebaseTeams, firebaseArticles, firebaseLooper } from '../../../firebase';
 import style from './NewsList.css';
-import axios from 'axios';
 
 class NewsList extends Component {
 
@@ -23,21 +23,40 @@ class NewsList extends Component {
 
   request = (start, end) => {
     if(this.state.teams.length < 1) {
-      axios.get(`${URL}/teams`)
-        .then( response => {
-          this.setState({
-            teams: [...this.state.teams, ...response.data]
-          })
-        })
+      firebaseTeams.once('value')
+        .then((snapshot) => {
+          const teams = firebaseLooper(snapshot);
+          this.setState({ teams });
+        });
+
+      // axios.get(`${URL}/teams`)
+      //   .then( response => {
+      //     this.setState({
+      //       teams: [...this.state.teams, ...response.data]
+      //     })
+      //   })
     }
-    axios.get(`${URL}/articles?_start=${start}&_end=${end}`)
-      .then( response => {
+
+    firebaseArticles.orderByChild("id").startAt(start).endAt(end).once('value')
+      .then((snapshot) => {
+        const articles = firebaseLooper(snapshot);
         this.setState({
-          items: [...this.state.items, ...response.data],
+          items: [...this.state.items, ...articles],
           start,
           end
         })
       })
+      .catch((err) => {
+        console.log(err);
+      })
+    // axios.get(`${URL}/articles?_start=${start}&_end=${end}`)
+    //   .then( response => {
+    //     this.setState({
+    //       items: [...this.state.items, ...response.data],
+    //       start,
+    //       end
+    //     })
+    //   })
   }
 
   renderNews = (type) => {
@@ -109,7 +128,7 @@ class NewsList extends Component {
 
   loadmore = () => {
     let end = this.state.end + this.state.amount
-    this.request(this.state.end, end);
+    this.request(this.state.end + 1, end);
   }
 
   
