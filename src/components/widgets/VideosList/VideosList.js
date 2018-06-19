@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import style from './VideosList.css';
-import axios from 'axios';
-import { URL } from '../../../config';
+import { firebaseTeams, firebaseVideos, firebaseLooper, firebaseArticles } from '../../../firebase';
+// import axios from 'axios';
+// import { URL } from '../../../config';
 
 import Button from '../Button/Button';
 import VideosTemplate from './VideosTemplate';
@@ -26,27 +27,46 @@ class VideosList extends Component {
 
   request = (start, end) => {
     if(this.state.teams.length < 1) {
-      axios.get(`${URL}/teams`)
-        .then( response => {
+      firebaseTeams.once('value')
+        .then((snapshot) => {
+          const teams = firebaseLooper(snapshot);
           this.setState({
-            teams: [...this.state.teams, ...response.data]
+            teams
           })
         })
+      // axios.get(`${URL}/teams`)
+      //   .then( response => {
+      //     this.setState({
+      //       teams: [...this.state.teams, ...response.data]
+      //     })
+      //   })
     }
-    axios.get(`${URL}/articles?_start=${start}&_end=${end}`)
-      .then( response => {
-        console.log(response.data);
+    firebaseVideos.orderByChild('id').startAt(start).endAt(end).once('value')
+      .then((snapshot) => {
+        const videos = firebaseLooper(snapshot);
         this.setState({
-          videos: [...this.state.videos, ...response.data],
+          videos: [...this.state.videos, ...videos],
           start,
           end
         })
       })
+      .catch((err) => {
+        console.log(err);
+      })
+    // axios.get(`${URL}/articles?_start=${start}&_end=${end}`)
+    //   .then( response => {
+    //     console.log(response.data);
+    //     this.setState({
+    //       videos: [...this.state.videos, ...response.data],
+    //       start,
+    //       end
+    //     })
+    //   })
   }
 
   loadMore() {
     let end = this.state.end + this.state.amount
-    this.request(this.state.end, end);
+    this.request(this.state.end + 1, end);
   }
 
   renderButton = () => {
