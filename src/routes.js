@@ -10,10 +10,10 @@ import VideosMain from './components/Articles/Videos/VideosMain/VideosMain';
 import Signin from './components/Signin/Signin';
 
 
-class Routes extends Component {
-  render() {
+const Routes = (props) => {
+  console.log(props.user);
     return (
-    <Layout>
+    <Layout user={props.user}>
       <Switch>
         <Route path="/" exact component={Home} />
         <Route path="/articles/:id" exact component={NewsArticles} />
@@ -24,7 +24,6 @@ class Routes extends Component {
       </Switch>
     </Layout>
     )
-  }
 }
 
 export default Routes;
