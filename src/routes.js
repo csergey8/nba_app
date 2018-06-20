@@ -11,8 +11,6 @@ import Signin from './components/Signin/Signin';
 
 
 class Routes extends Component {
-  
-
   render() {
     return (
     <Layout>
