@@ -42,6 +42,32 @@ const FormFields = ({formdata, change, id}) => {
           </div>
         );
         break;
+      case('select'):
+          formTemplate = (
+            <div>
+              <select
+                value={formdata.value}
+                name={formdata.config.name}
+                onChange={(event) => change({
+                  event,
+                  id,
+                  blur: false
+                })}
+                onBlur={(event) => change({
+                  event,
+                  id,
+                  blur: true
+                })}
+              >
+              {formdata.config.options.map((item, i) => {
+                return (
+                  <option key={i} value={item.id}>{item.name}</option>
+                );
+              })}
+              </select>
+            </div>
+          );
+        break;  
       default:
         formTemplate = null;
     }
