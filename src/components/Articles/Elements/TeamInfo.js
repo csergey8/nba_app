@@ -3,6 +3,7 @@ import style from '../Articles.css';
 
 const TeamInfo = (props) => {
   const renderStats = () => {
+    console.log(props.team)
     if(props.team.stats) {
       return (
         <strong>

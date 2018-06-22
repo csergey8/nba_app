@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import FormFields from '../widgets/FormFields/FormFields';
 import Uploader from '../widgets/FileUploader/FileUploader';
 import style from './Dashboard.css';
-import { firebaseTeams, firebaseLooper } from '../../firebase';
+import { firebaseTeams, firebaseLooper, firebaseArticles, firebase } from '../../firebase';
 
 import { Editor } from 'react-draft-wysiwyg';
 import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
@@ -49,11 +49,11 @@ class Dashboard extends Component {
         value: '',
         valid: true
       },
-      teams: {
+      team: {
         element: 'select',
         value: '',
         config: {
-          name: 'teams',
+          name: 'team',
           options: []
         },
         validation: {
@@ -63,11 +63,11 @@ class Dashboard extends Component {
         touched: false,
         validationMessage: ''
       },
-      // image: {
-      //   element: 'image',
-      //   value: '',
-      //   valid: true
-      // }
+      image: {
+        element: 'image',
+        value: '',
+        valid: true
+      }
       
     }
   }
@@ -133,11 +133,34 @@ class Dashboard extends Component {
     for(let key in this.state.formdata) {
       formIsValid = this.state.formdata[key].valid && formIsValid;
     }
+    console.log(formIsValid);
 
-    console.log(dataToSubmit);
 
     if(formIsValid) {
-      console.log('Submit post');
+      this.setState({
+        loading: true,
+        postError: ''
+      })
+      firebaseArticles.orderByChild('id').limitToLast(1).once('value')
+        .then((snapshot) => {
+          let articleId = null;
+          snapshot.forEach(childSnapshot => {
+            articleId = childSnapshot.val().id;
+          })
+           dataToSubmit['date'] = firebase.database.ServerValue.TIMESTAMP;
+           dataToSubmit['id'] = articleId + 1;
+           dataToSubmit['team'] = parseInt(dataToSubmit['team']);
+
+           firebaseArticles.push(dataToSubmit)
+            .then((article) => {
+              this.props.history.push(`/articles/${article.key}`);
+            })
+            .catch(err => {
+              this.setState({
+                postError: err.message
+              })
+            })
+        })
     } else {
       this.setState({
         postError: 'Something went wrong'
@@ -171,17 +194,17 @@ class Dashboard extends Component {
   loadTeams = () => {
     firebaseTeams.once('value')
       .then((snapshot) => {
-        let teams = [];
+        let team = [];
         snapshot.forEach((childSnapshot) => {
-          teams.push({
+          team.push({
             id: childSnapshot.val().teamId,
             name: childSnapshot.val().city
           })
         })
         const newFormData = {...this.state.formdata};
-        const newElement = {...newFormData['teams']};
-        newElement.config.options = teams;
-        newFormData['teams'] = newElement;
+        const newElement = {...newFormData['team']};
+        newElement.config.options = team;
+        newFormData['team'] = newElement;
 
         this.setState({
           formdata: newFormData
@@ -223,8 +246,8 @@ class Dashboard extends Component {
           />
 
             <FormFields
-              id={'teams'}
-              formdata={this.state.formdata.teams}
+              id={'team'}
+              formdata={this.state.formdata.team}
               change={(element) => this.updateForm(element)}
             />
 

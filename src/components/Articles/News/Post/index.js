@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 // import axios from 'axios';
 // import { URL } from '../../../../config';
-import { firebaseDB, firebaseLooper, firebaseTeams } from '../../../../firebase';
+import { firebaseDB, firebaseLooper, firebaseTeams, firebase } from '../../../../firebase';
 import moment from 'moment';
 import HeaderArticle from './HeaderArticle';
 
@@ -12,7 +12,8 @@ class NewsArticles extends Component {
 
   state = {
     article: [],
-    team: []
+    team: [],
+    imageURL: ''
   }
 
   
@@ -20,20 +21,19 @@ class NewsArticles extends Component {
     firebaseDB.ref(`articles/${this.props.match.params.id}`).once('value')
       .then((snapshot) => {
         let article = snapshot.val();
+        
 
         firebaseTeams.orderByChild('teamId').equalTo(article.team).once('value')
           .then((snapshot) => {
-            const team = firebaseLooper(snapshot)
+            const team = firebaseLooper(snapshot);
+            console.log(team);
             this.setState({
               article,
               team
             })
+            this.getImageURL(article.image);
           })
       })
-
-
-
-
 
     // axios.get(`${URL}/articles?id=${this.props.match.params.id}`)
     //   .then( response => {
@@ -49,9 +49,20 @@ class NewsArticles extends Component {
     //   })
   }
 
+  getImageURL = (filename) => {
+    firebase.storage().ref('images')
+      .child(filename).getDownloadURL()
+        .then(url => {
+          this.setState({
+            imageURL: url
+          })
+        })
+  }
+
+
   render() {
     const article = this.state.article;
-    const team = this.state.team;
+    const team = this.state.team[0];
     console.log(this.state);
     return (
       <div className={style.article_wapper}>
@@ -65,12 +76,15 @@ class NewsArticles extends Component {
           <div 
           className={style.artilceImg}
           style={{
-            background: `url('/images/articles/${article.image}')`
+            background: `url('${this.state.imageURL}')`
           }}
           >
           </div>
-          <div className={style.articleText}>
-            {article.body}
+          <div 
+          className={style.articleText} 
+          dangerouslySetInnerHTML={{
+            __html: article.body
+          }}>
           </div>
         </div>
       </div>
