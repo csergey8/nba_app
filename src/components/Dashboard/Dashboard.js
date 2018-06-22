@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import FormFields from '../widgets/FormFields/FormFields';
+import Uploader from '../widgets/FileUploader/FileUploader';
 import style from './Dashboard.css';
 import { firebaseTeams, firebaseLooper } from '../../firebase';
 
@@ -61,7 +62,12 @@ class Dashboard extends Component {
         valid: false,
         touched: false,
         validationMessage: ''
-      }
+      },
+      // image: {
+      //   element: 'image',
+      //   value: '',
+      //   valid: true
+      // }
       
     }
   }
@@ -183,11 +189,20 @@ class Dashboard extends Component {
       })
   }
 
+  storeFilename = (filename) => {
+    this.updateForm({id: 'image'}, filename)
+  }
+
   render() {
     return (
       <div className={style.postContainer}>
         <form onSubmit={this.submitForm} >
         <h2>Add post</h2>
+
+          <Uploader
+            filename={ (filename) => this.storeFilename(filename)}
+          />
+
           <FormFields
             id={'author'}
             formdata={this.state.formdata.author}
