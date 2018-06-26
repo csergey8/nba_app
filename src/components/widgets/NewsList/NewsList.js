@@ -40,6 +40,7 @@ class NewsList extends Component {
     firebaseArticles.orderByChild("id").startAt(start).endAt(end).once('value')
       .then((snapshot) => {
         const articles = firebaseLooper(snapshot);
+        console.log(snapshot);
         this.setState({
           items: [...this.state.items, ...articles],
           start,
@@ -58,6 +59,7 @@ class NewsList extends Component {
     //     })
     //   })
   }
+  
 
   renderNews = (type) => {
     let template = null;
