@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import style from './VideosList.css';
-import { firebaseTeams, firebaseVideos, firebaseLooper, firebaseArticles } from '../../../firebase';
+import { firebaseTeams, firebaseVideos, firebaseLooper } from '../../../firebase';
 // import axios from 'axios';
 // import { URL } from '../../../config';
 
@@ -22,7 +22,6 @@ class VideosList extends Component {
 
   componentWillMount() {
     this.request(this.state.start, this.state.end);
-    console.log(this.state.videos);
   }
 
   request = (start, end) => {

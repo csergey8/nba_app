@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import { Route, Switch } from 'react-router-dom';
+import React from 'react'
+import { Switch } from 'react-router-dom';
 
 import Home from './components/Home/Home';
 import Layout from './hoc/Layout/Layout';
@@ -14,7 +14,6 @@ import PublicRoutes from './components/AuthRoutes/publicRoutes';
 
 
 const Routes = (props) => {
-  console.log(props.user);
     return (
     <Layout user={props.user}>
       <Switch>

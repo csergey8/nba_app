@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 // import axios from 'axios';
 // import { URL } from '../../../../config';
 import { firebaseDB, firebaseLooper, firebaseTeams, firebase } from '../../../../firebase';
-import moment from 'moment';
 import HeaderArticle from './HeaderArticle';
 
 

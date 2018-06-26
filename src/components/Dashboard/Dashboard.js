@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import FormFields from '../widgets/FormFields/FormFields';
 import Uploader from '../widgets/FileUploader/FileUploader';
 import style from './Dashboard.css';
-import { firebaseTeams, firebaseLooper, firebaseArticles, firebase } from '../../firebase';
+import { firebaseTeams,  firebaseArticles, firebase } from '../../firebase';
 
 import { Editor } from 'react-draft-wysiwyg';
-import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
+import { EditorState } from 'draft-js';
 import { stateToHTML } from 'draft-js-export-html';
 
 class Dashboard extends Component {
@@ -176,7 +176,6 @@ class Dashboard extends Component {
 
   onEditorStateChange = (editorState) => {
     let contentState = editorState.getCurrentContent();
-    let rawState = convertToRaw(contentState);
     let html = stateToHTML(contentState);
     console.log(html);
     this.updateForm({

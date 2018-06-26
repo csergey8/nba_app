@@ -29,13 +29,6 @@ const Button = (props) => {
             template = null;
     }
         return template;
-
-
-  return (
-    <div>
-      button
-    </div>
-  )
 }
 
 export default Button;
